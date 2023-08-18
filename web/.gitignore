@@ -1,0 +1,5 @@
+node_modules/
+.vitepress/dist/
+.vitepress/cache/
+yarn-error.log
+yarn.lock
