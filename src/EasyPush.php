@@ -8,6 +8,7 @@ use Carpedx\EasyPush\Contracts\GatewayInterface;
 use Carpedx\EasyPush\Contracts\StrategyInterface;
 use Carpedx\EasyPush\Exceptions\InvalidArgumentException;
 use Carpedx\EasyPush\Exceptions\NoGatewayAvailableException;
+use Carpedx\EasyPush\Gateways\Gateway;
 use Carpedx\EasyPush\Strategies\OrderStrategy;
 use Carpedx\EasyPush\Support\Config;
 
@@ -55,9 +56,13 @@ class EasyPush
      *
      * @throws NoGatewayAvailableException
      */
-    public function push($pushload)
+    public function push($pushload, array $gateways = [])
     {
-        $gateways = $this->config->get('default.gateways', []);
+        $gateways = empty($gateways) ? [] : $gateways;
+
+        if (empty($gateways)) {
+            $gateways = $this->config->get('default.gateways', []);
+        }
 
         return $this->getMessenger()->push($pushload, $this->formatGateways($gateways));
     }
@@ -135,6 +140,10 @@ class EasyPush
     protected function createGateway($name)
     {
         $config = $this->config->get("gateways.{$name}", []);
+
+        if (!isset($config['timeout'])) {
+            $config['timeout'] = $this->config->get('timeout', Gateway::DEFAULT_TIMEOUT);
+        }
 
         $className = $this->formatGatewayClassName($name);
         $gateway = $this->makeGateway($className, $config);

@@ -4,6 +4,7 @@
 namespace Carpedx\EasyPush\Traits;
 
 
+use Carpedx\EasyPush\Gateways\Gateway;
 use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
 
@@ -86,8 +87,9 @@ trait HasHttpRequest
     {
         $options = [];
 
-        return \array_merge($options, [
-            'timeout' => 5.0,
+        return array_merge($options, [
+            'base_uri' => method_exists($this, 'getBaseUri') ? $this->getBaseUri() : '',
+            'timeout' => method_exists($this, 'getTimeout') ? $this->getTimeout() : Gateway::DEFAULT_TIMEOUT,
         ]);
     }
 

@@ -31,8 +31,16 @@ $ composer require "carpedx/easy-push"
 use Carpedx\EasyPush\EasyPush;
 
 $config = [
+    // HTTP 请求的超时时间（秒），默认5.0（秒）
+    'timeout' => 5.0,
+    
     // 默认发送配置
     'default' => [
+        // 网关调用策略：
+        //  \Carpedx\EasyPush\Strategies\OrderStrategy::class 顺序调用（默认）
+        //  \Carpedx\EasyPush\Strategies\RandomStrategy::class 随机调用
+        'strategy' => \Carpedx\EasyPush\Strategies\OrderStrategy::class,
+        
         // 默认可用的发送网关
         'gateways' => [
             'jiguang'
@@ -40,9 +48,15 @@ $config = [
     ],
     // 可用的网关配置
     'gateways' => [
+        // 极光推送 
         'jiguang' => [
-            'api_key' => '7d431e42dfa6a6d693ac2d04',
-            'master_secret' =>'5e987ac6d2e04d95a9d8f0d1',
+            'app_key' => '',
+            'master_secret' =>'',
+        ],
+        // 友盟推送
+        'umeng' => [
+            'app_key' => '',
+            'app_master_secret' =>'',
         ],
         //...
     ],
@@ -64,4 +78,14 @@ $easyPush->push([
         ]
     ]
 ]);
+```
+
+## 发送网关
+
+默认使用 `default` 中的设置来发送，如果你想要覆盖默认的设置。在 `send` 方法中使用第三个参数即可：
+
+```php
+$easyPush->send(13188888888, [
+    'foo'  => 'bar',
+ ], ['jiguang', 'umeng']); // 这里的网关配置将会覆盖全局默认值
 ```
