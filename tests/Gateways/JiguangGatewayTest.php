@@ -12,48 +12,33 @@ use Carpedx\EasyPush\Tests\TestCase;
 
 class JiguangGatewayTest extends TestCase
 {
-    public function test(){
+    public function test()
+    {
         $config = [
+            // HTTP 请求的超时时间（秒）
+//            'timeout' => 5.0,
+
+            // 默认发送配置
             'default' => [
+                // 网关调用策略，默认：顺序调用
+//                'strategy' => \Carpedx\EasyPush\Strategies\OrderStrategy::class,
+
+                // 默认可用的发送网关
                 'gateways' => [
                     'jiguang'
                 ],
             ],
+            // 可用的网关配置
             'gateways' => [
                 'jiguang' => [
-                    'app_key' => 'eb21672cb619c8a0b247d612',
-                    'master_secret' => '061a11c27346aa72a2956e05s',
+                    'access_key_id' => '',
+                    'access_key_secret' => '',
+                    'sign_name' => '',
                 ],
             ],
         ];
         $easyPush = new EasyPush($config);
-        $result = $easyPush->push([
-            'platform' => 'all',
-            'audience' => [
-                'registration_id' => ['141fe1da9fba5ef9e1b']
-            ],
-            'notification' => [
-              'alert' => 'Hi,JPush'
-            ],
-            'message' => [
-                'msg_content' => 'Hi,JPush',
-                'content_type' => 'text',
-                'title' => 'msg',
-                'extras' => [
-                    'key' => 'value'
-                ]
-            ]
-        ]);
-
-
-        /*"message": {
-            "msg_content": "Hi,JPush",
-            "content_type": "text",
-            "title": "msg",
-            "extras": {
-                    "key": "value"
-            }
-        },*/
+        $easyPush->push([]);
     }
 
     public function testPush()
@@ -89,7 +74,7 @@ class JiguangGatewayTest extends TestCase
                })
             )
             ->andReturn([
-                'sendno' => '0',
+                'sendno' => JiguangGateway::SUCCESS_CODE,
                 'msg_id' => '18100925337025339',
             ], [
                 'error' => [
@@ -97,7 +82,6 @@ class JiguangGatewayTest extends TestCase
                     'message' => 'Authen failed',
                 ]
             ])->twice();
-
 
         $config = new Config($config);
 
@@ -116,7 +100,7 @@ class JiguangGatewayTest extends TestCase
             ]
         ];
         $this->assertSame([
-            'sendno' => '0',
+            'sendno' => JiguangGateway::SUCCESS_CODE,
             'msg_id' => '18100925337025339',
         ], $gateway->push($pushload, $config));
 
